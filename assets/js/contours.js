@@ -2,15 +2,11 @@
    La coupe d'un chêne se redessine en courbes de niveau ; la souris déforme le
    champ comme un nœud du bois et la courbe survolée s'allume à l'orange du logo.
    Sans WebGL 2 : photo des cernes + courbes dessinées en SVG. */
-import { Renderer } from './vendor/ogl/core/Renderer.js';
-import { Program } from './vendor/ogl/core/Program.js';
-import { Mesh } from './vendor/ogl/core/Mesh.js';
-import { Texture } from './vendor/ogl/core/Texture.js';
-import { Triangle } from './vendor/ogl/extras/Triangle.js';
+import { Renderer, Program, Mesh, Texture, Triangle } from './vendor/ogl.bundle.js?v=2';
 
 const MZ = window.MZ || {};
 const calme = document.documentElement.classList.contains('calme');
-const BASE = window.MZ_BASE || '';
+const BASE = document.documentElement.getAttribute('data-base') || '';
 
 const BRUIT = /* glsl */ `
 float hash(vec2 p) { p = fract(p * vec2(123.34, 456.21)); p += dot(p, p + 45.32); return fract(p.x * p.y); }
@@ -161,8 +157,10 @@ function lancer(box) {
   const charger = () => {
     const im = new Image();
     im.decoding = 'async';
-    im.onload = () => { texture.image = im; uniforms.uTex.value = [im.naturalWidth, im.naturalHeight]; pret = true; if (!enCours) demarrer(); };
-    im.src = BASE + box.getAttribute(modePortrait ? 'data-tex-v' : 'data-tex-h');
+    im.onerror = () => { if (!pret) { gl.canvas.remove(); repli(box); } };
+    im.onload = () => { texture.image = im; uniforms.uTex.value = [im.naturalWidth, im.naturalHeight]; pret = true; if (enCours) renderer.render({ scene: mesh }); else demarrer(); };
+    const src = box.getAttribute(modePortrait ? 'data-tex-v' : 'data-tex-h');
+    im.src = BASE + (box.clientWidth * Math.min(devicePixelRatio || 1, 1.5) < 1100 ? src.replace('-1200.webp', '-640.webp') : src);
   };
 
   const css = getComputedStyle(document.documentElement);
@@ -220,42 +218,53 @@ function lancer(box) {
     cible.x = (e.clientX - b.left) / b.width;
     cible.y = 1 - (e.clientY - b.top) / b.height;
     cible.f = e.pointerType === 'mouse' ? 1 : 0.6;
+    demarrer();
   }, { passive: true });
-  zone.addEventListener('pointerleave', () => { cible.f = 0; });
+  zone.addEventListener('pointerleave', () => { cible.f = 0; demarrer(); });
 
-  const t0 = performance.now();
+  /* Rendu à la demande : la boucle ne tourne que pendant l'ouverture et quand la souris
+     bouge, puis s'arrête (aucun calcul quand rien ne change, ni hors de l'écran). */
+  let animOuverture = !calme;
+  let temps = 0;
+  let dernier = 0;
   function frame(now) {
-    if (!visible || calme) { enCours = false; return; }
-    enCours = true;
+    if (!visible || document.hidden) { enCours = false; return; }
+    const dt = dernier ? Math.min(0.05, (now - dernier) / 1000) : 0.016;
+    dernier = now;
     souris.x += (cible.x - souris.x) * 0.08;
     souris.y += (cible.y - souris.y) * 0.08;
     souris.f += (cible.f - souris.f) * 0.05;
+    temps += dt;
     uniforms.uSouris.value = [souris.x, souris.y];
     uniforms.uForce.value = souris.f;
-    uniforms.uTemps.value = (now - t0) / 1000;
+    uniforms.uTemps.value = temps;
     renderer.render({ scene: mesh });
-    requestAnimationFrame(frame);
+    const bouge = Math.abs(cible.x - souris.x) + Math.abs(cible.y - souris.y) > 0.0004 || Math.abs(cible.f - souris.f) > 0.003;
+    if (animOuverture || bouge) requestAnimationFrame(frame);
+    else { enCours = false; dernier = 0; }
   }
   function demarrer() {
-    if (!pret) return;
+    if (!pret || enCours || !visible) return;
     if (calme) { renderer.render({ scene: mesh }); return; }
+    enCours = true;
     requestAnimationFrame(frame);
   }
 
   taille();
-  window.addEventListener('resize', () => { taille(); if (calme && pret) renderer.render({ scene: mesh }); });
+  window.addEventListener('resize', () => { taille(); if (pret) { if (calme || !enCours) renderer.render({ scene: mesh }); } });
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) demarrer(); });
   charger();
 
   if ('IntersectionObserver' in window) {
     new IntersectionObserver(([en]) => {
       visible = en.isIntersecting;
-      if (visible && !enCours && pret) demarrer();
+      if (visible) demarrer();
     }).observe(box);
   }
 
-  // Ouverture orchestrée : la photo se change en courbes (≈ 2,2 s)
+  // Ouverture orchestrée : la photo se change en courbes (≈ 2,4 s)
   if (!calme && window.gsap) {
-    gsap.to(uniforms.uRevele, { value: 1, duration: 2.4, ease: 'power2.inOut', delay: 0.15 });
+    gsap.to(uniforms.uRevele, { value: 1, duration: 2.4, ease: 'power2.inOut', delay: 0.15, onComplete: () => { animOuverture = false; } });
     if (repere) gsap.fromTo(repere, { opacity: 0 }, { opacity: 1, duration: 1, delay: 1.9, onStart: () => { repere.hidden = false; } });
   } else if (repere) { repere.hidden = false; }
 

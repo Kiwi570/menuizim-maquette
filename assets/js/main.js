@@ -5,7 +5,8 @@
   const d = document;
   const html = d.documentElement;
   const MZ = window.MZ;
-  const BASE = window.MZ_BASE || '';
+  const BASE = html.getAttribute('data-base') || '';
+  window.MZ_BASE = BASE;
   const hasGsap = typeof window.gsap !== 'undefined';
   const calme = html.classList.contains('calme') || !hasGsap;
   MZ.calme = calme;
@@ -42,16 +43,51 @@
   MZ.scrollTo = (cible) => {
     const el = typeof cible === 'string' ? d.querySelector(cible) : cible;
     if (!el) return;
-    const off = -(parseInt(getComputedStyle(html).getPropertyValue('--head-h'), 10) || 76) - 10;
+    const barre = d.querySelector('[data-filtres]');
+    const off = -(parseInt(getComputedStyle(html).getPropertyValue('--head-h'), 10) || 76) - 10 - (barre && el.closest('main') && barre.compareDocumentPosition(el) & Node.DOCUMENT_POSITION_FOLLOWING ? barre.offsetHeight : 0);
     if (lenis) lenis.scrollTo(el, { offset: off, duration: 1.4 });
     else window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY + off, behavior: calme ? 'auto' : 'smooth' });
   };
+  /* Chemins comparés sans « .html » ni « index » : / = /index.html, /projet = /projet.html */
+  const norm = (p) => (p.replace(/\/index(\.html)?$/, '/').replace(/\.html$/, '').replace(/\/$/, '') || '/');
+  const memePage = (url) => norm(url.pathname) === norm(location.pathname);
+  MZ.memePage = memePage;
+
+  /* En ligne (Vercel, cleanUrls) : liens directs vers les adresses propres, sans redirection */
+  if (/(\.vercel\.app|menuizim\.fr)$/.test(location.hostname)) {
+    d.querySelectorAll('a[href]').forEach((a) => {
+      const h = a.getAttribute('href');
+      if (!h || /^(https?:|tel:|mailto:|sms:|#)/.test(h)) return;
+      const url = new URL(a.href, location.href);
+      if (url.origin !== location.origin || !/\.html$/.test(url.pathname)) return;
+      a.href = norm(url.pathname) + url.hash;
+    });
+  }
+
+  /* Préchargement de la page visée au survol ou au toucher */
+  const prechargees = new Set();
+  const precharger = (e) => {
+    const a = e.target.closest && e.target.closest('a[href]');
+    if (!a || a.target === '_blank') return;
+    const url = new URL(a.href, location.href);
+    if (url.origin !== location.origin || memePage(url)) return;
+    const cleP = url.pathname;
+    if (prechargees.has(cleP)) return;
+    prechargees.add(cleP);
+    const l = d.createElement('link');
+    l.rel = 'prefetch'; l.href = cleP; l.as = 'document';
+    d.head.appendChild(l);
+  };
+  d.addEventListener('pointerover', precharger, { passive: true });
+  d.addEventListener('touchstart', precharger, { passive: true });
+  d.addEventListener('focusin', precharger);
+
   // Ancres internes
   d.addEventListener('click', (e) => {
     const a = e.target.closest('a[href*="#"]');
     if (!a) return;
     const url = new URL(a.href, location.href);
-    if (url.pathname !== location.pathname || !url.hash || url.hash.length < 2) return;
+    if (!memePage(url) || !url.hash || url.hash.length < 2) return;
     const cible = d.getElementById(decodeURIComponent(url.hash.slice(1)));
     if (!cible) return;
     e.preventDefault();
@@ -85,6 +121,9 @@
   window.addEventListener('scroll', () => { if (!enAttente) { enAttente = true; requestAnimationFrame(surDefilement); } }, { passive: true });
   surDefilement();
 
+  /* ---------- Contenu inerte (menu ouvert, visionneuse) ---------- */
+  MZ.inerte = (v, tout = false) => { d.querySelectorAll('main, .pied, .skip' + (tout ? ', .site-head, .menu-mobile' : '')).forEach((n) => { n.inert = v; }); };
+
   /* ---------- Menu mobile ---------- */
   const burger = d.querySelector('.burger');
   const menu = d.getElementById('menu-mobile');
@@ -93,6 +132,7 @@
     menu.classList.remove('is-ouvert');
     burger.setAttribute('aria-expanded', 'false');
     burger.setAttribute('aria-label', 'Ouvrir le menu');
+    MZ.inerte(false);
     if (lenis) lenis.start();
   }
   if (burger && menu) {
@@ -102,10 +142,12 @@
       menu.classList.add('is-ouvert');
       burger.setAttribute('aria-expanded', 'true');
       burger.setAttribute('aria-label', 'Fermer le menu');
+      MZ.inerte(true);
       if (lenis) lenis.stop();
+      setTimeout(() => { const l = menu.querySelector('nav a'); if (l) l.focus({ preventScroll: true }); }, 120);
       if (!calme) gsap.from(menu.querySelectorAll('nav a'), { yPercent: 60, opacity: 0, stagger: 0.06, duration: 0.9, delay: 0.15 });
     });
-    d.addEventListener('keydown', (e) => { if (e.key === 'Escape') fermerMenu(); });
+    d.addEventListener('keydown', (e) => { if (e.key === 'Escape' && menu.classList.contains('is-ouvert')) { fermerMenu(); burger.focus(); } });
   }
 
   /* ---------- Copier ---------- */
@@ -409,14 +451,14 @@
   if (!calme && cle('mz-trait') === '1') {
     cle('mz-trait', null);
     gsap.set(tp, { attr: { 'stroke-width': 180 }, strokeDasharray: 1, strokeDashoffset: 0 });
-    gsap.to(tp, { strokeDashoffset: -1, duration: 1.05, ease: 'expo.inOut', delay: 0.05, onComplete: () => gsap.set(tp, { attr: { 'stroke-width': 0 } }) });
+    gsap.to(tp, { strokeDashoffset: -1, duration: 0.8, ease: 'power3.inOut', delay: 0.05, onComplete: () => gsap.set(tp, { attr: { 'stroke-width': 0 } }) });
   }
   MZ.partir = function (href) {
     if (calme) { location.href = href; return; }
     cle('mz-trait', '1');
     gsap.set(tp, { attr: { 'stroke-width': 180 }, strokeDasharray: 1, strokeDashoffset: 1 });
-    gsap.to(tp, { strokeDashoffset: 0, duration: 0.75, ease: 'expo.inOut', onComplete: () => { location.href = href; } });
-    setTimeout(() => { location.href = href; }, 1400); // sécurité
+    gsap.to(tp, { strokeDashoffset: 0, duration: 0.55, ease: 'power3.inOut', onComplete: () => { location.href = href; } });
+    setTimeout(() => { location.href = href; }, 1100); // sécurité si l'animation est suspendue
   };
   d.addEventListener('click', (e) => {
     if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
@@ -426,7 +468,7 @@
     if (!href || href.startsWith('#') || /^(tel|mailto|sms):/.test(href)) return;
     const url = new URL(a.href, location.href);
     if (url.origin !== location.origin) return;
-    if (url.pathname === location.pathname) return; // même page : ancres gérées plus haut
+    if (memePage(url)) return; // même page : ancres et filtres gérés ailleurs
     e.preventDefault();
     fermerMenu();
     MZ.partir(a.href);
@@ -437,7 +479,7 @@
   /* ---------- Toile « convergence » (appel final) ---------- */
   d.querySelectorAll('[data-convergence]').forEach((c) => {
     const ctx = c.getContext('2d');
-    const dpr = Math.min(devicePixelRatio || 1, 1.75);
+    const dpr = Math.min(devicePixelRatio || 1, 1.5);
     let w = 0; let h = 0; let vis = false; let t0 = performance.now();
     function taille() { w = c.clientWidth; h = c.clientHeight; c.width = w * dpr; c.height = h * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); }
     function dessiner(now) {
@@ -450,8 +492,8 @@
         if (r <= 2) continue;
         const ix = (Math.floor((k * pas - t) / pas) + 1000) % 5 === 0;
         ctx.beginPath();
-        for (let i = 0; i <= 90; i++) {
-          const a = (i / 90) * Math.PI * 2;
+        for (let i = 0; i <= 72; i++) {
+          const a = (i / 72) * Math.PI * 2;
           const rr = r * (1 + 0.07 * bruit(Math.cos(a) * 1.6, Math.sin(a) * 1.6 + r * 0.004, 7));
           const x = cxp + Math.cos(a) * rr * 1.12; const y = cyp + Math.sin(a) * rr;
           if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);

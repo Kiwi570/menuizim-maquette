@@ -51,13 +51,17 @@
   const fichiers = form.querySelector('#photos');
   const apercus = form.querySelector('[data-apercus]');
   if (fichiers) {
+    let urls = [];
     fichiers.addEventListener('change', () => {
+      urls.forEach((u) => URL.revokeObjectURL(u));
+      urls = [];
       apercus.innerHTML = '';
       Array.from(fichiers.files).slice(0, 8).forEach((f) => {
         if (!f.type.startsWith('image/')) return;
         const im = d.createElement('img');
         im.alt = f.name;
         im.src = URL.createObjectURL(f);
+        urls.push(im.src);
         apercus.appendChild(im);
       });
     });
@@ -80,6 +84,14 @@
       else if (!form.querySelector('#consent').checked) msg = 'Cochez la case d’accord pour être recontacté.';
     }
     if (err) err.textContent = msg;
+    // champs concernés signalés aux lecteurs d'écran
+    f.querySelectorAll('input, textarea').forEach((c) => c.removeAttribute('aria-invalid'));
+    if (msg) {
+      const champ = k === 3 ? f.querySelector('#idee')
+        : k === 5 ? ['#nom', '#commune', '#email', '#consent'].map((q) => f.querySelector(q)).find((c) => (c.type === 'checkbox' ? !c.checked : (c.type === 'email' ? !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(c.value.trim()) : !c.value.trim())))
+        : f.querySelector('input');
+      if (champ) { champ.setAttribute('aria-invalid', 'true'); if (err) champ.setAttribute('aria-describedby', err.id || (err.id = `erreur-${k}`)); champ.focus({ preventScroll: false }); }
+    }
     return !msg;
   }
 
@@ -158,7 +170,7 @@
     const titre = d.querySelector('.hero__titre');
     if (titre && window.SplitText) {
       const chars = [];
-      titre.querySelectorAll('.l').forEach((l) => chars.push(...new SplitText(l, { type: 'chars' }).chars));
+      titre.querySelectorAll('.l').forEach((l) => chars.push(...new SplitText(l, { type: 'words,chars', wordsClass: 'mot' }).chars));
       gsap.from(chars, { yPercent: 115, rotate: 5, stagger: 0.025, duration: 1.3, delay: 0.2 });
     }
     gsap.from('[data-hero-el]', { y: 26, opacity: 0, stagger: 0.1, duration: 1.1, delay: 0.6 });

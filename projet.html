@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr">
+<html lang="fr" data-base="">
 <head>
 <meta charset="utf-8">
 <title>Votre projet · La MenuiZim</title>
@@ -7,16 +7,24 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Décrivez votre projet d’aménagement ou de mobilier sur mesure à La MenuiZim, menuiserie à Marlenheim.">
 <meta name="theme-color" content="#eee8dd">
+<meta name="robots" content="noindex, nofollow">
 <meta property="og:type" content="website">
+<meta property="og:url" content="https://menuizim-maquette.vercel.app/projet">
 <meta property="og:title" content="Votre projet · La MenuiZim">
 <meta property="og:description" content="Décrivez votre projet d’aménagement ou de mobilier sur mesure à La MenuiZim, menuiserie à Marlenheim.">
-<meta property="og:image" content="assets/img/logo/og-menuizim.jpg">
+<meta property="og:image" content="https://menuizim-maquette.vercel.app/assets/img/logo/og-menuizim.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
 <meta property="og:locale" content="fr_FR">
 <link rel="icon" type="image/png" href="assets/img/logo/lmz-96.png">
-<link rel="preload" href="assets/fonts/fraunces-var.woff" as="font" type="font/woff" crossorigin>
-<link rel="stylesheet" href="assets/css/fonts.css">
-<link rel="stylesheet" href="assets/css/main.css">
-<script>try{var c=localStorage.getItem('mz-calme');if(c==='1'||(c===null&&matchMedia('(prefers-reduced-motion: reduce)').matches))document.documentElement.classList.add('calme')}catch(e){}document.documentElement.classList.add('js')</script>
+<link rel="apple-touch-icon" href="assets/img/logo/lmz-192.png">
+<link rel="preload" href="assets/fonts/fraunces-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/fraunces-italic-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/jetbrains-mono-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/css/fonts.css?v=2">
+<link rel="stylesheet" href="assets/css/main.css?v=2">
+<script src="assets/js/pre.js?v=2"></script>
 </head>
 <body class="">
 <a class="skip" href="#contenu">Aller au contenu</a>
@@ -60,7 +68,7 @@
     <div>
       <p class="eyebrow" data-hero-el>Votre projet</p>
       <h1 id="titre-projet" style="margin-top:22px" class="hero__titre"><span class="l">Parlez-moi</span><span class="l">de votre projet.</span></h1>
-      <p class="lede" data-hero-el>Décrivez votre idée en six étapes courtes : profil, pièce, matériaux, dimensions, délai, coordonnées.</p>
+      <p class="lede" data-hero-el>Décrivez votre idée en six étapes courtes&nbsp;: profil, pièce, matériaux, dimensions, délai, coordonnées.</p>
     </div>
     <figure style="margin:0" data-hero-el>
       <div class="p-tete__img img-mask" data-revele><picture><source media="(max-width: 860px)" srcset="assets/img/amb/crayon-equerre-v-640.webp 640w, assets/img/amb/crayon-equerre-v-1200.webp 784w" sizes="92vw"><img src="assets/img/amb/crayon-equerre-h-1200.webp" srcset="assets/img/amb/crayon-equerre-h-640.webp 640w, assets/img/amb/crayon-equerre-h-1200.webp 1168w" sizes="(max-width: 860px) 92vw, 36vw" width="1168" height="784" alt="Crayon de menuisier, équerre et mètre pliant sur une planche de chêne" fetchpriority="high" decoding="async"></picture></div>
@@ -80,7 +88,7 @@
           <input type="radio" name="profil" id="profil-pro" value="Professionnel"><label for="profil-pro">Professionnel<small>Bureaux, commerce, accueil</small></label>
           <input type="radio" name="profil" id="profil-archi" value="Architecte ou maître d’œuvre"><label for="profil-archi">Architecte ou maître d’œuvre<small>Projet en collaboration</small></label>
         </div>
-        <p class="erreur" data-erreur></p>
+        <p class="erreur" data-erreur role="alert"></p>
       </fieldset>
       <fieldset class="etape-form" data-pas="2" hidden>
         <legend><span class="label">Étape 2 sur 6</span><strong>Quelle pièce, quel aménagement&nbsp;?</strong></legend>
@@ -95,7 +103,7 @@
           <input type="checkbox" name="piece" id="piece-pro" value="pro"><label for="piece-pro">Professionnel</label>
         </div>
         <div class="exemple" data-exemple hidden></div>
-        <p class="erreur" data-erreur></p>
+        <p class="erreur" data-erreur role="alert"></p>
       </fieldset>
       <fieldset class="etape-form" data-pas="3" hidden>
         <legend><span class="label">Étape 3 sur 6</span><strong>Quels matériaux vous plaisent&nbsp;?</strong></legend>
@@ -112,7 +120,7 @@
           <input type="checkbox" name="materiau" id="mat-inconnu" value="Je ne sais pas encore"><label for="mat-inconnu" class="sans-tex"><span>Je ne sais pas encore</span></label>
         </div>
         <span class="illus">Textures d’illustration</span>
-        <p class="erreur" data-erreur></p>
+        <p class="erreur" data-erreur role="alert"></p>
       </fieldset>
       <fieldset class="etape-form" data-pas="4" hidden>
         <legend><span class="label">Étape 4 sur 6</span><strong>Dimensions et photos</strong></legend>
@@ -122,8 +130,8 @@
           <div class="champ"><label for="profondeur">Profondeur (cm)</label><input id="profondeur" name="profondeur" type="number" inputmode="numeric" min="0" placeholder="Facultatif"></div>
         </div>
         <div class="champ"><label for="photos">Photos de la pièce (facultatif)</label><input id="photos" name="photos" type="file" accept="image/*" multiple><div class="apercus" data-apercus></div></div>
-        <div class="champ"><label for="idee">Décrivez votre idée</label><textarea id="idee" name="idee" required minlength="10" placeholder="Par exemple : un dressing sous les rampants de la chambre, avec tiroirs et penderie."></textarea><span class="aide">Quelques phrases suffisent ; les mesures précises seront relevées sur place.</span></div>
-        <p class="erreur" data-erreur></p>
+        <div class="champ"><label for="idee">Décrivez votre idée</label><textarea id="idee" name="idee" required minlength="10" placeholder="Par exemple&nbsp;: un dressing sous les rampants de la chambre, avec tiroirs et penderie."></textarea><span class="aide">Quelques phrases suffisent&#8239;; les mesures précises seront relevées sur place.</span></div>
+        <p class="erreur" data-erreur role="alert"></p>
       </fieldset>
       <fieldset class="etape-form" data-pas="5" hidden>
         <legend><span class="label">Étape 5 sur 6</span><strong>Délai et budget indicatif</strong></legend>
@@ -148,13 +156,13 @@
           <input type="radio" name="pref" id="pref-mail" value="Email"><label for="pref-mail">Réponse par email</label>
         </div>
         <label class="consent"><input type="checkbox" name="consent" id="consent" required> <span>J’accepte que ces informations soient utilisées pour me recontacter au sujet de ce projet. <span class="todo">Politique de confidentialité</span></span></label>
-        <p class="erreur" data-erreur></p>
+        <p class="erreur" data-erreur role="alert"></p>
       </fieldset>
       <section class="etape-form" data-pas="7" hidden aria-labelledby="titre-recap">
         <p class="label" style="color:var(--chene-fonce)">Récapitulatif</p>
         <h2 id="titre-recap" style="font-size:var(--t-l);margin-top:10px">Merci, votre projet est décrit.</h2>
         <dl class="recap" data-recap></dl>
-        <p class="simulation"><span class="todo">Démonstration</span> <span>Rien n’a été envoyé : sur le site en ligne, ce formulaire transmettra la demande à contact@menuizim.fr.</span></p>
+        <p class="simulation"><span class="todo">Démonstration</span> <span>Rien n’a été envoyé&nbsp;: sur le site en ligne, ce formulaire transmettra la demande à contact@menuizim.fr.</span></p>
       </section>
       <div class="form-nav">
         <button class="btn btn--trait" type="button" data-prec disabled>← Précédent</button>
@@ -166,7 +174,7 @@
     <div class="bloc"><span class="label" style="color:var(--graphite-3)">Téléphone</span><a class="val" href="tel:+33749653707">07 49 65 37 07</a><button class="copier" type="button" data-copier="07 49 65 37 07" style="justify-self:start">Copier le numéro</button></div>
     <div class="bloc"><span class="label" style="color:var(--graphite-3)">Email</span><span class="val">contact@menuizim.fr</span><button class="copier" type="button" data-copier="contact@menuizim.fr" style="justify-self:start">Copier l’adresse</button></div>
     <div class="bloc"><span class="label" style="color:var(--graphite-3)">Venez nous rencontrer</span><span class="val">1 rue d’Oslo<br>67520 Marlenheim</span><span class="mono" style="color:var(--graphite-2)">Simon Zettel, artisan menuisier</span><span class="todo" style="justify-self:start">Horaires d’accueil</span></div>
-    <div class="mini-carte" data-mini-carte><svg viewBox="0 0 400 250" role="img" aria-label="Carte schématique : Marlenheim, à 20 minutes de Strasbourg"></svg></div>
+    <div class="mini-carte" data-mini-carte><svg viewBox="0 0 400 250" role="img" aria-label="Carte schématique&nbsp;: Marlenheim, à 20 minutes de Strasbourg"></svg></div>
     <figure style="margin:0"><div class="img-mask" data-revele><img src="assets/img/amb/porte-atelier-1200.webp" srcset="assets/img/amb/porte-atelier-640.webp 640w, assets/img/amb/porte-atelier-1200.webp 784w" sizes="(max-width: 960px) 92vw, 26vw" width="784" height="1168" alt="Grande porte coulissante d’un atelier entrouverte sur des panneaux de bois" loading="lazy" decoding="async"></div><figcaption class="illus" style="margin-top:8px">Image d’ambiance</figcaption></figure>
   </aside>
 </section>
@@ -179,7 +187,7 @@
         <p style="margin-top:22px;max-width:34ch">Menuiserie et agencement sur mesure. Conception, fabrication en atelier à Marlenheim, livraison et pose.</p>
       </div>
       <div>
-        <h3>Pages</h3>
+        <h2 class="pied__titre">Pages</h2>
         <ul>
           <li><a href="index.html">Accueil</a></li>
           <li><a href="realisations.html">Réalisations</a></li>
@@ -188,7 +196,7 @@
         </ul>
       </div>
       <div>
-        <h3>Contact</h3>
+        <h2 class="pied__titre">Contact</h2>
         <ul>
           <li>Simon Zettel, artisan menuisier</li>
           <li><a href="tel:+33749653707">07 49 65 37 07</a></li>
@@ -197,12 +205,12 @@
         </ul>
       </div>
       <div>
-        <h3>Suivre l’atelier</h3>
+        <h2 class="pied__titre">Suivre l’atelier</h2>
         <ul>
           <li><a href="https://www.instagram.com/la.menuizim/" target="_blank" rel="noopener">Instagram ↗</a></li>
           <li><a href="https://www.facebook.com/la.menuizim" target="_blank" rel="noopener">Facebook ↗</a></li>
         </ul>
-        <h3 style="margin-top:26px">Informations</h3>
+        <h2 class="pied__titre" style="margin-top:26px">Informations</h2>
         <ul>
           <li><span class="todo">Mentions légales, SIRET</span></li>
           <li><span class="todo">Assurance décennale</span></li>
@@ -216,16 +224,11 @@
     </div>
   </div>
 </footer>
-<script src="assets/js/vendor/gsap.min.js"></script>
-<script src="assets/js/vendor/ScrollTrigger.min.js"></script>
-<script src="assets/js/vendor/SplitText.min.js"></script>
-<script src="assets/js/vendor/Flip.min.js"></script>
-<script src="assets/js/vendor/lenis.js"></script>
-<script src="assets/js/images.js"></script>
-<script src="assets/js/data.js"></script>
-<script>window.MZ_BASE="";</script>
-<script src="assets/js/main.js"></script>
-<script src="assets/js/projet.js"></script>
-<script type="module" src="assets/js/contours.js"></script>
+<script src="assets/js/vendor/vendor.js?v=2"></script>
+<script src="assets/js/images.js?v=2"></script>
+<script src="assets/js/data.js?v=2"></script>
+<script src="assets/js/main.js?v=2"></script>
+<script src="assets/js/projet.js?v=2"></script>
+<script type="module" src="assets/js/contours.js?v=2"></script>
 </body>
 </html>

@@ -1,22 +1,23 @@
-/* Polices hébergées avec le site (sous-ensemble latin, licence SIL OFL — voir assets/fonts) */
+/* Polices hébergées avec le site : sous-ensemble latin, WOFF2, axes réduits
+   (Fraunces : opsz, graisse 200–460, WONK ; SOFT figé à 35). Licence SIL OFL, voir assets/fonts. */
 @font-face {
   font-family: "Fraunces";
-  src: url("../fonts/fraunces-var.woff") format("woff");
-  font-weight: 100 900;
+  src: url("../fonts/fraunces-var.woff2") format("woff2");
+  font-weight: 200 460;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "Fraunces";
-  src: url("../fonts/fraunces-italic-var.woff") format("woff");
-  font-weight: 100 900;
+  src: url("../fonts/fraunces-italic-var.woff2") format("woff2");
+  font-weight: 200 460;
   font-style: italic;
   font-display: swap;
 }
 @font-face {
   font-family: "JetBrains Mono";
-  src: url("../fonts/jetbrains-mono-var.woff") format("woff");
-  font-weight: 100 800;
+  src: url("../fonts/jetbrains-mono-var.woff2") format("woff2");
+  font-weight: 400 700;
   font-style: normal;
   font-display: swap;
 }

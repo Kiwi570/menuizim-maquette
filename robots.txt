@@ -1,0 +1,3 @@
+# Maquette de travail : ne pas indexer
+User-agent: *
+Disallow: /

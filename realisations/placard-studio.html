@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr">
+<html lang="fr" data-base="../">
 <head>
 <meta charset="utf-8">
 <title>Placard de rangement d’un studio · La MenuiZim</title>
@@ -7,16 +7,24 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Placard de rangement sur mesure dans un studio. Façades en latté chêne, finition huile Rubio white mat naturel. Intérieur en contreplaqué bouleau.">
 <meta name="theme-color" content="#eee8dd">
+<meta name="robots" content="noindex, nofollow">
 <meta property="og:type" content="website">
+<meta property="og:url" content="https://menuizim-maquette.vercel.app/realisations/placard-studio">
 <meta property="og:title" content="Placard de rangement d’un studio · La MenuiZim">
 <meta property="og:description" content="Placard de rangement sur mesure dans un studio. Façades en latté chêne, finition huile Rubio white mat naturel. Intérieur en contreplaqué bouleau.">
-<meta property="og:image" content="../assets/img/logo/og-menuizim.jpg">
+<meta property="og:image" content="https://menuizim-maquette.vercel.app/assets/img/logo/og-menuizim.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
 <meta property="og:locale" content="fr_FR">
 <link rel="icon" type="image/png" href="../assets/img/logo/lmz-96.png">
-<link rel="preload" href="../assets/fonts/fraunces-var.woff" as="font" type="font/woff" crossorigin>
-<link rel="stylesheet" href="../assets/css/fonts.css">
-<link rel="stylesheet" href="../assets/css/main.css">
-<script>try{var c=localStorage.getItem('mz-calme');if(c==='1'||(c===null&&matchMedia('(prefers-reduced-motion: reduce)').matches))document.documentElement.classList.add('calme')}catch(e){}document.documentElement.classList.add('js')</script>
+<link rel="apple-touch-icon" href="../assets/img/logo/lmz-192.png">
+<link rel="preload" href="../assets/fonts/fraunces-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../assets/fonts/fraunces-italic-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../assets/fonts/jetbrains-mono-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../assets/css/fonts.css?v=2">
+<link rel="stylesheet" href="../assets/css/main.css?v=2">
+<script src="../assets/js/pre.js?v=2"></script>
 </head>
 <body class="">
 <a class="skip" href="#contenu">Aller au contenu</a>
@@ -57,7 +65,7 @@
   <nav class="fil mono" aria-label="Fil d’Ariane"><a href="../index.html">Accueil</a><span aria-hidden="true">/</span><a href="../realisations.html">Réalisations</a><span aria-hidden="true">/</span><a href="../realisations.html#p-chambre">Chambres &amp; dressings</a></nav>
   <h1 class="fiche-titre">Placard de rangement d’un studio</h1>
   <div class="fiche-grille">
-    <div class="fiche-media" data-loupe-photo data-hd="../assets/img/r/placard-studio-1-1600.webp">
+    <div class="fiche-media" data-loupe-photo data-alt="Placard de rangement d’un studio" data-hd="../assets/img/r/placard-studio-1-1600.webp">
       <div class="cote-frame" data-cote-h="Latté chêne" data-cote-v="Huile Rubio white, mat naturel" style="margin:34px">
         <div class="cadre"><img src="../assets/img/r/placard-studio-1-1600.webp" srcset="../assets/img/r/placard-studio-1-480.webp 480w, ../assets/img/r/placard-studio-1-960.webp 960w, ../assets/img/r/placard-studio-1-1600.webp 1080w" sizes="(max-width: 860px) 86vw, 58vw" width="1080" height="1350" alt="Placard de rangement d’un studio" fetchpriority="high" decoding="async"></div>
       </div>
@@ -89,9 +97,11 @@
     <span class="mono">Chambres &amp; dressings · Bouleau (rondins)</span>
   </div>
 </a>
-<div class="visionneuse" data-visionneuse hidden role="dialog" aria-modal="true" aria-label="Photo agrandie">
-  <div class="visionneuse__barre"><button type="button" data-fermer>Fermer</button></div>
+<div class="visionneuse" data-visionneuse hidden role="dialog" aria-modal="true" aria-label="Photos du projet">
+  <div class="visionneuse__barre"><span class="mono visionneuse__compte" data-compte-photo aria-live="polite"></span><button type="button" data-fermer>Fermer</button></div>
   <img alt="" src="data:image/gif;base64,R0lGODlhAQABAAAAACw=">
+  <button class="visionneuse__nav visionneuse__nav--prec" type="button" data-prec-photo aria-label="Photo précédente">←</button>
+  <button class="visionneuse__nav visionneuse__nav--suiv" type="button" data-suiv-photo aria-label="Photo suivante">→</button>
 </div>
 </main>
 <footer class="pied on-nuit">
@@ -102,7 +112,7 @@
         <p style="margin-top:22px;max-width:34ch">Menuiserie et agencement sur mesure. Conception, fabrication en atelier à Marlenheim, livraison et pose.</p>
       </div>
       <div>
-        <h3>Pages</h3>
+        <h2 class="pied__titre">Pages</h2>
         <ul>
           <li><a href="../index.html">Accueil</a></li>
           <li><a href="../realisations.html">Réalisations</a></li>
@@ -111,7 +121,7 @@
         </ul>
       </div>
       <div>
-        <h3>Contact</h3>
+        <h2 class="pied__titre">Contact</h2>
         <ul>
           <li>Simon Zettel, artisan menuisier</li>
           <li><a href="tel:+33749653707">07 49 65 37 07</a></li>
@@ -120,12 +130,12 @@
         </ul>
       </div>
       <div>
-        <h3>Suivre l’atelier</h3>
+        <h2 class="pied__titre">Suivre l’atelier</h2>
         <ul>
           <li><a href="https://www.instagram.com/la.menuizim/" target="_blank" rel="noopener">Instagram ↗</a></li>
           <li><a href="https://www.facebook.com/la.menuizim" target="_blank" rel="noopener">Facebook ↗</a></li>
         </ul>
-        <h3 style="margin-top:26px">Informations</h3>
+        <h2 class="pied__titre" style="margin-top:26px">Informations</h2>
         <ul>
           <li><span class="todo">Mentions légales, SIRET</span></li>
           <li><span class="todo">Assurance décennale</span></li>
@@ -139,16 +149,11 @@
     </div>
   </div>
 </footer>
-<script src="../assets/js/vendor/gsap.min.js"></script>
-<script src="../assets/js/vendor/ScrollTrigger.min.js"></script>
-<script src="../assets/js/vendor/SplitText.min.js"></script>
-<script src="../assets/js/vendor/Flip.min.js"></script>
-<script src="../assets/js/vendor/lenis.js"></script>
-<script src="../assets/js/images.js"></script>
-<script src="../assets/js/data.js"></script>
-<script>window.MZ_BASE="../";</script>
-<script src="../assets/js/main.js"></script>
-<script src="../assets/js/fiche.js"></script>
+<script src="../assets/js/vendor/vendor.js?v=2"></script>
+<script src="../assets/js/images.js?v=2"></script>
+<script src="../assets/js/data.js?v=2"></script>
+<script src="../assets/js/main.js?v=2"></script>
+<script src="../assets/js/fiche.js?v=2"></script>
 
 </body>
 </html>

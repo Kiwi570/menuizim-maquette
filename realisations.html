@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr">
+<html lang="fr" data-base="">
 <head>
 <meta charset="utf-8">
 <title>Réalisations · La MenuiZim</title>
@@ -7,16 +7,24 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Cuisines, dressings, bureaux, mobilier et aménagements extérieurs sur mesure réalisés par La MenuiZim, menuiserie à Marlenheim.">
 <meta name="theme-color" content="#eee8dd">
+<meta name="robots" content="noindex, nofollow">
 <meta property="og:type" content="website">
+<meta property="og:url" content="https://menuizim-maquette.vercel.app/realisations">
 <meta property="og:title" content="Réalisations · La MenuiZim">
 <meta property="og:description" content="Cuisines, dressings, bureaux, mobilier et aménagements extérieurs sur mesure réalisés par La MenuiZim, menuiserie à Marlenheim.">
-<meta property="og:image" content="assets/img/logo/og-menuizim.jpg">
+<meta property="og:image" content="https://menuizim-maquette.vercel.app/assets/img/logo/og-menuizim.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
 <meta property="og:locale" content="fr_FR">
 <link rel="icon" type="image/png" href="assets/img/logo/lmz-96.png">
-<link rel="preload" href="assets/fonts/fraunces-var.woff" as="font" type="font/woff" crossorigin>
-<link rel="stylesheet" href="assets/css/fonts.css">
-<link rel="stylesheet" href="assets/css/main.css">
-<script>try{var c=localStorage.getItem('mz-calme');if(c==='1'||(c===null&&matchMedia('(prefers-reduced-motion: reduce)').matches))document.documentElement.classList.add('calme')}catch(e){}document.documentElement.classList.add('js')</script>
+<link rel="apple-touch-icon" href="assets/img/logo/lmz-192.png">
+<link rel="preload" href="assets/fonts/fraunces-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/fraunces-italic-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/jetbrains-mono-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/css/fonts.css?v=2">
+<link rel="stylesheet" href="assets/css/main.css?v=2">
+<script src="assets/js/pre.js?v=2"></script>
 </head>
 <body class="">
 <a class="skip" href="#contenu">Aller au contenu</a>
@@ -60,11 +68,11 @@
     <div>
       <p class="eyebrow" data-hero-el>Réalisations</p>
       <h1 id="titre-real" style="margin-top:22px" class="hero__titre"><span class="l">Fait main,</span><span class="l">sur mesure.</span></h1>
-      <p class="lede" data-hero-el><span class="odo" data-odo="24">24</span> projets documentés par La MenuiZim : cuisines, dressings, bureaux, mobilier et aménagements extérieurs. Les descriptions reprennent les légendes publiées par l’atelier.</p>
+      <p class="lede" data-hero-el><span class="odo" data-odo="24">24</span> projets documentés par La MenuiZim&nbsp;: cuisines, dressings, bureaux, mobilier et aménagements extérieurs. Les descriptions reprennent les légendes publiées par l’atelier.</p>
     </div>
     <figure style="margin:0" data-hero-el>
-      <div class="p-tete__img img-mask" data-revele><picture><source media="(max-width: 860px)" srcset="assets/img/amb/planches-v-640.webp 640w, assets/img/amb/planches-v-1200.webp 784w" sizes="92vw"><img src="assets/img/amb/planches-h-1200.webp" srcset="assets/img/amb/planches-h-640.webp 640w, assets/img/amb/planches-h-1200.webp 1168w" sizes="(max-width: 860px) 92vw, 36vw" width="1168" height="784" alt="Planches de chêne empilées, vues en bout" fetchpriority="high" decoding="async"></picture></div>
-      <figcaption class="illus" style="margin-top:10px">Image d’ambiance</figcaption>
+      <div class="p-tete__img img-mask" data-revele><img src="assets/img/r/bureau-placard-claustra-4-960.webp" srcset="assets/img/r/bureau-placard-claustra-4-480.webp 480w, assets/img/r/bureau-placard-claustra-4-960.webp 960w, assets/img/r/bureau-placard-claustra-4-1600.webp 1440w" sizes="(max-width: 860px) 92vw, 36vw" width="1440" height="1086" alt="Claustra en lattes de chêne et plateau de bureau sur mesure" fetchpriority="high" decoding="async"></div>
+      <figcaption class="mono" style="margin-top:10px;color:var(--graphite-2)">Bureau, placard et claustra · avec Creastra</figcaption>
     </figure>
   </div>
 </section>
@@ -81,6 +89,7 @@
       <button class="puce" type="button" data-piece="exterieur" aria-pressed="false">Extérieur<sup>4</sup></button>
       <button class="puce" type="button" data-piece="pro" aria-pressed="false">Professionnel<sup>1</sup></button>
     </div>
+    <div class="filtres__droite">
     <label class="visually-hidden" for="filtre-mat">Filtrer par matériau</label>
     <select id="filtre-mat" data-mat>
       <option value="">Tous les matériaux</option>
@@ -99,6 +108,7 @@
       <option value="perfectsense">PerfectSense (1)</option>
     </select>
     <span class="filtres__compte mono" aria-live="polite" data-compte>24 projets</span>
+    </div>
   </div>
 </div>
 <section class="wrap" aria-label="Liste des réalisations">
@@ -315,7 +325,7 @@
         <p style="margin-top:22px;max-width:34ch">Menuiserie et agencement sur mesure. Conception, fabrication en atelier à Marlenheim, livraison et pose.</p>
       </div>
       <div>
-        <h3>Pages</h3>
+        <h2 class="pied__titre">Pages</h2>
         <ul>
           <li><a href="index.html">Accueil</a></li>
           <li><a href="realisations.html">Réalisations</a></li>
@@ -324,7 +334,7 @@
         </ul>
       </div>
       <div>
-        <h3>Contact</h3>
+        <h2 class="pied__titre">Contact</h2>
         <ul>
           <li>Simon Zettel, artisan menuisier</li>
           <li><a href="tel:+33749653707">07 49 65 37 07</a></li>
@@ -333,12 +343,12 @@
         </ul>
       </div>
       <div>
-        <h3>Suivre l’atelier</h3>
+        <h2 class="pied__titre">Suivre l’atelier</h2>
         <ul>
           <li><a href="https://www.instagram.com/la.menuizim/" target="_blank" rel="noopener">Instagram ↗</a></li>
           <li><a href="https://www.facebook.com/la.menuizim" target="_blank" rel="noopener">Facebook ↗</a></li>
         </ul>
-        <h3 style="margin-top:26px">Informations</h3>
+        <h2 class="pied__titre" style="margin-top:26px">Informations</h2>
         <ul>
           <li><span class="todo">Mentions légales, SIRET</span></li>
           <li><span class="todo">Assurance décennale</span></li>
@@ -352,16 +362,12 @@
     </div>
   </div>
 </footer>
-<script src="assets/js/vendor/gsap.min.js"></script>
-<script src="assets/js/vendor/ScrollTrigger.min.js"></script>
-<script src="assets/js/vendor/SplitText.min.js"></script>
-<script src="assets/js/vendor/Flip.min.js"></script>
-<script src="assets/js/vendor/lenis.js"></script>
-<script src="assets/js/images.js"></script>
-<script src="assets/js/data.js"></script>
-<script>window.MZ_BASE="";</script>
-<script src="assets/js/main.js"></script>
-<script src="assets/js/realisations.js"></script>
-<script type="module" src="assets/js/contours.js"></script>
+<script src="assets/js/vendor/vendor.js?v=2"></script>
+<script src="assets/js/vendor/Flip.min.js?v=2"></script>
+<script src="assets/js/images.js?v=2"></script>
+<script src="assets/js/data.js?v=2"></script>
+<script src="assets/js/main.js?v=2"></script>
+<script src="assets/js/realisations.js?v=2"></script>
+<script type="module" src="assets/js/contours.js?v=2"></script>
 </body>
 </html>

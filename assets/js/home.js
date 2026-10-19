@@ -14,7 +14,7 @@
     const lignes = titre ? titre.querySelectorAll('.l') : [];
     let mots = [];
     if (window.SplitText && titre) {
-      lignes.forEach((l) => { mots = mots.concat(new SplitText(l, { type: 'chars', charsClass: 'ch' }).chars); });
+      lignes.forEach((l) => { mots = mots.concat(new SplitText(l, { type: 'words,chars', charsClass: 'ch', wordsClass: 'mot' }).chars); });
     }
     const tl = gsap.timeline({ delay: 0.25 });
     if (mots.length) tl.from(mots, { yPercent: 115, rotate: 6, duration: 1.3, stagger: 0.028, ease: 'expo.out' }, 0);
@@ -107,20 +107,27 @@
   }
 
   /* ---------- Matériauthèque ---------- */
-  const mats = d.querySelectorAll('.mat');
+  const mats = d.querySelectorAll('[data-mat]');
+  function retourner(m, v) {
+    const btn = m.querySelector('.mat__btn');
+    const dos = m.querySelector('.mat__dos');
+    m.classList.toggle('is-retourne', v);
+    btn.setAttribute('aria-expanded', String(v));
+    dos.setAttribute('aria-hidden', String(!v));
+    dos.querySelectorAll('a, button').forEach((x) => { x.tabIndex = v ? 0 : -1; });
+    if (v && d.activeElement === btn) { const l = dos.querySelector('a'); if (l) l.focus({ preventScroll: true }); }
+  }
   mats.forEach((m) => {
-    m.addEventListener('click', (e) => {
-      const lien = e.target.closest('[data-href]');
-      const retourne = m.classList.contains('is-retourne') || (MZ.fin && !calme && m.matches(':hover'));
-      if (lien && retourne) { MZ.partir(lien.getAttribute('data-href')); return; }
-      m.classList.toggle('is-retourne');
-    });
+    const btn = m.querySelector('.mat__btn');
+    btn.addEventListener('click', () => retourner(m, true));
+    m.querySelector('.mat__fermer').addEventListener('click', () => { retourner(m, false); btn.focus({ preventScroll: true }); });
+    m.addEventListener('keydown', (e) => { if (e.key === 'Escape' && m.classList.contains('is-retourne')) { retourner(m, false); btn.focus({ preventScroll: true }); } });
   });
   if (!calme && mats.length) {
     gsap.from(mats, {
       rotationY: -70, rotationZ: (i) => (i % 3 - 1) * 4, x: (i) => -(i % 3) * 60, opacity: 0, transformOrigin: '0% 50%',
       duration: 1.6, stagger: 0.08, ease: 'expo.out',
-      scrollTrigger: { trigger: '[data-mats]', start: 'top 80%', once: true }
+      scrollTrigger: { trigger: '[data-materiautheque]', start: 'top 80%', once: true }
     });
   }
 
@@ -227,14 +234,22 @@
   const def = d.querySelector('[data-defilant]');
   if (def && !calme) {
     const g = def.querySelector('.defilant__groupe');
-    const loop = gsap.to(def, { x: () => -g.offsetWidth, duration: 26, ease: 'none', repeat: -1 });
-    let vitesse = 1;
+    const loop = gsap.to(def, { x: () => -g.offsetWidth, duration: 26, ease: 'none', repeat: -1, paused: true });
+    let survol = false;
+    let retour = null;
+    // accélère avec la vitesse de défilement, puis revient doucement ; en pause hors de l'écran
     ScrollTrigger.create({
       trigger: '.collab', start: 'top bottom', end: 'bottom top',
-      onUpdate: (self) => { vitesse = 1 + Math.min(4, Math.abs(self.getVelocity()) / 300); gsap.to(loop, { timeScale: vitesse * (self.direction < 0 ? -1 : 1), duration: 0.3, overwrite: true }); gsap.to(loop, { timeScale: 1, duration: 1.2, delay: 0.3 }); }
+      onToggle: (self) => loop.paused(!self.isActive),
+      onUpdate: (self) => {
+        if (survol) return;
+        gsap.to(loop, { timeScale: 1 + Math.min(4, Math.abs(self.getVelocity()) / 300), duration: 0.4, overwrite: true });
+        if (retour) retour.kill();
+        retour = gsap.delayedCall(0.3, () => { if (!survol) gsap.to(loop, { timeScale: 1, duration: 1.2, overwrite: true }); });
+      }
     });
-    def.addEventListener('pointerenter', () => gsap.to(loop, { timeScale: 0.15, duration: 0.6 }));
-    def.addEventListener('pointerleave', () => gsap.to(loop, { timeScale: 1, duration: 0.6 }));
+    def.addEventListener('pointerenter', () => { survol = true; gsap.to(loop, { timeScale: 0.15, duration: 0.6, overwrite: true }); });
+    def.addEventListener('pointerleave', () => { survol = false; gsap.to(loop, { timeScale: 1, duration: 0.6, overwrite: true }); });
   } else if (def) {
     def.style.flexWrap = 'wrap';
     def.querySelectorAll('.defilant__groupe[aria-hidden]').forEach((g) => { g.hidden = true; });

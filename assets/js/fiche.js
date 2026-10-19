@@ -48,7 +48,15 @@
   } else if (media) {
     const aide = media.querySelector('.fiche-aide');
     if (aide) aide.textContent = 'Touchez une photo pour l’agrandir';
-    media.querySelector('.cadre').addEventListener('click', () => ouvrir(media.getAttribute('data-hd')));
+  }
+  if (media) {
+    const cadre = media.querySelector('.cadre');
+    cadre.setAttribute('role', 'button');
+    cadre.setAttribute('tabindex', '0');
+    cadre.setAttribute('aria-label', 'Agrandir la photo principale');
+    cadre.style.cursor = 'zoom-in';
+    cadre.addEventListener('click', () => ouvrir(0));
+    cadre.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); ouvrir(0); } });
   }
 
   /* Bande de photos : glisse à l'horizontale au défilement */
@@ -64,18 +72,35 @@
       bande.style.overflowX = 'auto';
       bande.setAttribute('data-lenis-prevent', '');
     }
-    piste.querySelectorAll('[data-voir]').forEach((b) => b.addEventListener('click', () => ouvrir(b.getAttribute('data-voir'), b.querySelector('img').alt)));
+    piste.querySelectorAll('[data-voir]').forEach((b, k) => b.addEventListener('click', () => ouvrir(k + 1)));
   }
 
   /* Visionneuse */
   const vis = d.querySelector('[data-visionneuse]');
+  if (vis) d.body.appendChild(vis); // hors de <main>, qui devient inerte pendant l'affichage
   let retour = null;
-  function ouvrir(src, alt = '') {
+  /* Liste des photos du projet : principale puis bande */
+  const photos = [];
+  if (media) photos.push({ src: media.getAttribute('data-hd'), alt: media.getAttribute('data-alt') || '' });
+  d.querySelectorAll('[data-voir]').forEach((b) => photos.push({ src: b.getAttribute('data-voir'), alt: b.querySelector('img').alt }));
+  let courant = 0;
+  function afficher(k, sens = 0) {
+    if (!vis || !photos.length) return;
+    courant = (k + photos.length) % photos.length;
+    const im = vis.querySelector('img');
+    im.src = photos[courant].src; im.alt = photos[courant].alt;
+    const c = vis.querySelector('[data-compte-photo]');
+    if (c) c.textContent = `${courant + 1} / ${photos.length}`;
+    vis.querySelectorAll('.visionneuse__nav').forEach((n) => { n.hidden = photos.length < 2; });
+    if (!calme && sens) gsap.fromTo(im, { x: 40 * sens, opacity: 0 }, { x: 0, opacity: 1, duration: 0.5 });
+  }
+  function ouvrir(k) {
     if (!vis) return;
     retour = d.activeElement;
+    afficher(k);
     const im = vis.querySelector('img');
-    im.src = src; im.alt = alt;
     vis.hidden = false;
+    MZ.inerte(true, true);
     if (MZ.lenis) MZ.lenis.stop();
     vis.querySelector('[data-fermer]').focus();
     if (!calme) gsap.fromTo(im, { scale: 0.94, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.7 });
@@ -83,12 +108,30 @@
   function fermer() {
     if (!vis || vis.hidden) return;
     vis.hidden = true;
+    MZ.inerte(false, true);
     if (MZ.lenis) MZ.lenis.start();
     if (retour) retour.focus();
   }
   if (vis) {
-    vis.addEventListener('click', (e) => { if (e.target === vis || e.target.closest('[data-fermer]')) fermer(); });
-    d.addEventListener('keydown', (e) => { if (e.key === 'Escape') fermer(); });
+    vis.addEventListener('click', (e) => {
+      if (e.target === vis || e.target.closest('[data-fermer]')) fermer();
+      else if (e.target.closest('[data-prec-photo]')) afficher(courant - 1, -1);
+      else if (e.target.closest('[data-suiv-photo]')) afficher(courant + 1, 1);
+    });
+    d.addEventListener('keydown', (e) => {
+      if (vis.hidden) return;
+      if (e.key === 'Escape') fermer();
+      else if (e.key === 'ArrowLeft') afficher(courant - 1, -1);
+      else if (e.key === 'ArrowRight') afficher(courant + 1, 1);
+    });
+    // balayage au doigt
+    let x0 = null;
+    vis.addEventListener('touchstart', (e) => { x0 = e.touches[0].clientX; }, { passive: true });
+    vis.addEventListener('touchend', (e) => {
+      if (x0 === null) return;
+      const dx = e.changedTouches[0].clientX - x0; x0 = null;
+      if (Math.abs(dx) > 50) afficher(courant + (dx < 0 ? 1 : -1), dx < 0 ? 1 : -1);
+    }, { passive: true });
   }
 
   /* Réalisation suivante : la photo ondule le long du fil du bois */
@@ -111,7 +154,8 @@
         }
         vague.style.clipPath = `polygon(0% 0%, ${pts.join(', ')}, 0% 100%)`;
       };
-      gsap.to(o, { p: 1, duration: 1.1, ease: 'expo.inOut', onUpdate: poly, onComplete: () => MZ.partir(href) });
+      gsap.to(o, { p: 1, duration: 0.7, ease: 'power3.inOut', onUpdate: poly, onComplete: () => MZ.partir(href) });
+      setTimeout(() => { location.href = href; }, 2000); // sécurité si l'animation est suspendue
     });
     if (!calme) {
       gsap.from(suivant.querySelector('.suivant__in strong'), { yPercent: 40, opacity: 0, duration: 1.2, scrollTrigger: { trigger: suivant, start: 'top 80%', once: true } });

@@ -4,6 +4,16 @@
   const d = document;
   const MZ = window.MZ;
   const calme = MZ.calme;
+  /* Ouverture (aussi utilisée par la page 404) */
+  if (!calme) {
+    const titre = d.querySelector('.hero__titre');
+    if (titre && window.SplitText) {
+      const chars = [];
+      titre.querySelectorAll('.l').forEach((l) => chars.push(...new SplitText(l, { type: 'words,chars', wordsClass: 'mot' }).chars));
+      gsap.from(chars, { yPercent: 115, rotate: 5, stagger: 0.03, duration: 1.3, delay: 0.2 });
+    }
+    gsap.from('[data-hero-el]', { y: 26, opacity: 0, stagger: 0.1, duration: 1.1, delay: 0.6 });
+  }
   const galerie = d.querySelector('[data-galerie]');
   if (!galerie) return;
   const cartes = Array.from(galerie.querySelectorAll('.carte'));
@@ -21,7 +31,7 @@
       c.hidden = !ok;
       if (ok) n++;
     });
-    puces.forEach((p) => p.setAttribute('aria-pressed', String(p.dataset.piece === etat.piece)));
+    puces.forEach((p) => p.setAttribute('aria-pressed', String(p.dataset.piece === etat.piece && !(p.dataset.piece === '' && etat.mat))));
     if (select) select.value = etat.mat;
     compte.textContent = `${n} projet${n > 1 ? 's' : ''}`;
     vide.hidden = n !== 0;
@@ -38,8 +48,25 @@
     try { history.replaceState(null, '', h || location.pathname); } catch (e) { /* cadre restreint */ }
   }
 
-  puces.forEach((p) => p.addEventListener('click', () => { etat.piece = p.dataset.piece; etat.mat = ''; appliquer(); }));
-  if (select) select.addEventListener('change', () => { etat.mat = select.value; etat.piece = ''; appliquer(); });
+  /* Puces : fondu au bord quand la rangée défile */
+  const groupe = d.querySelector('.filtres__groupe');
+  const bord = () => {
+    if (!groupe) return;
+    const deb = groupe.scrollWidth > groupe.clientWidth + 2;
+    groupe.classList.toggle('is-deborde', deb);
+    groupe.classList.toggle('is-fin', deb && groupe.scrollLeft + groupe.clientWidth >= groupe.scrollWidth - 2);
+  };
+  if (groupe) { bord(); window.addEventListener('resize', bord); groupe.addEventListener('scroll', bord, { passive: true }); }
+
+  /* Après un filtre choisi en bas de page, remonter au début de la galerie */
+  function remonter() {
+    const haut = galerie.getBoundingClientRect().top;
+    const barre = d.querySelector('[data-filtres]');
+    if (haut < 0) setTimeout(() => MZ.scrollTo(galerie), calme ? 0 : 350);
+    else if (barre && haut > innerHeight) MZ.scrollTo(galerie);
+  }
+  puces.forEach((p) => p.addEventListener('click', () => { etat.piece = p.dataset.piece; etat.mat = ''; appliquer(); remonter(); }));
+  if (select) select.addEventListener('change', () => { etat.mat = select.value; etat.piece = ''; appliquer(); remonter(); });
   const reinit = d.querySelector('[data-reinit]');
   if (reinit) reinit.addEventListener('click', () => { etat.piece = ''; etat.mat = ''; appliquer(); });
 
@@ -53,15 +80,8 @@
   if (location.hash.length > 1) depuisAncre(false);
   window.addEventListener('hashchange', () => depuisAncre(true));
 
-  /* Ouverture */
+  /* Entrée des cartes */
   if (!calme) {
-    const titre = d.querySelector('.hero__titre');
-    if (titre && window.SplitText) {
-      const chars = [];
-      titre.querySelectorAll('.l').forEach((l) => chars.push(...new SplitText(l, { type: 'chars' }).chars));
-      gsap.from(chars, { yPercent: 115, rotate: 5, stagger: 0.03, duration: 1.3, delay: 0.2 });
-    }
-    gsap.from('[data-hero-el]', { y: 26, opacity: 0, stagger: 0.1, duration: 1.1, delay: 0.6 });
     cartes.forEach((c) => {
       if (c.hidden) return;
       const img = c.querySelector('.carte__img');
