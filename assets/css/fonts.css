@@ -1,0 +1,22 @@
+/* Polices hébergées avec le site (sous-ensemble latin, licence SIL OFL — voir assets/fonts) */
+@font-face {
+  font-family: "Fraunces";
+  src: url("../fonts/fraunces-var.woff") format("woff");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Fraunces";
+  src: url("../fonts/fraunces-italic-var.woff") format("woff");
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("../fonts/jetbrains-mono-var.woff") format("woff");
+  font-weight: 100 800;
+  font-style: normal;
+  font-display: swap;
+}
