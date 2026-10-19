@@ -8,4 +8,10 @@
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) h.classList.add('calme');
   }
   h.classList.add('js');
+  try {
+    if (sessionStorage.getItem('mz-rideau') === '1') {
+      sessionStorage.removeItem('mz-rideau');
+      if (!h.classList.contains('calme')) h.classList.add('arrivee');
+    }
+  } catch (e) { /* stockage indisponible */ }
 })();

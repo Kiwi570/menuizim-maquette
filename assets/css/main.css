@@ -615,7 +615,8 @@ em { font-style: italic; }
 .suivant__img img, .suivant__vague img { width: 100%; height: 100%; object-fit: cover; }
 .suivant__img img { opacity: 0.45; transition: opacity 0.6s, transform 1.4s var(--ease); }
 .suivant:hover .suivant__img img { opacity: 0.6; transform: scale(1.03); }
-.suivant__vague { z-index: 3; clip-path: polygon(0 0, 0 0, 0 100%, 0 100%); pointer-events: none; }
+.suivant__vague { z-index: 3; transform: translate3d(-101%, 0, 0); pointer-events: none; transition: transform 0.75s cubic-bezier(0.76, 0, 0.24, 1); }
+.suivant.is-part .suivant__vague { transform: translate3d(0, 0, 0); }
 .suivant__in { position: relative; z-index: 2; padding-block: 90px; display: grid; gap: 18px; }
 .suivant__in strong { font-family: var(--f-display); font-size: var(--t-xl); font-weight: 300; line-height: 0.95; font-variation-settings: "opsz" 144, "SOFT" 30; max-width: 16ch; }
 .visionneuse { position: fixed; inset: 0; z-index: 90; background: rgba(20, 19, 17, 0.94); display: grid; place-items: center; padding: max(20px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(20px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
@@ -709,9 +710,22 @@ em { font-style: italic; }
 @media (max-width: 560px) { .champs, .champs--3 { grid-template-columns: 1fr; } .recap > div { grid-template-columns: 1fr; gap: 2px; } .exemple { grid-template-columns: 90px minmax(0, 1fr); } .exemple img { width: 90px; height: 70px; } }
 
 /* ---------- Transition de page : trait de crayon ---------- */
-.trait-page { position: fixed; inset: 0; z-index: 120; pointer-events: none; }
-.trait-page svg { width: 100%; height: 100%; display: block; }
-.trait-page path { fill: none; stroke: var(--graphite); stroke-linecap: round; }
+/* Transition de page : une bande graphite inclinée, bordée d'un trait orange.
+   Panneau uni (calque de couleur unie, sans dessin) et trait fin séparé : seules des
+   transformations sont animées, par le compositeur. */
+.rideau { position: fixed; inset: 0; z-index: 130; pointer-events: none; overflow: hidden; visibility: hidden; contain: strict; }
+.rideau__bande, .rideau__trait { position: absolute; top: -10vh; bottom: -10vh; backface-visibility: hidden; }
+.rideau__bande { left: -25vh; width: calc(100vw + 50vh); background: var(--graphite); transform: translate3d(-100%, 0, 0) skewX(-14deg); }
+.rideau__trait { left: 0; width: 5px; background: var(--traceur); transform: translate3d(-25vh, 0, 0) skewX(-14deg); }
+html.depart .rideau, html.arrivee .rideau { visibility: visible; pointer-events: auto; }
+html.depart .rideau__bande { will-change: transform; animation: rideau-entree 0.55s cubic-bezier(0.62, 0, 0.3, 1) forwards; }
+html.depart .rideau__trait { will-change: transform; animation: trait-entree 0.55s cubic-bezier(0.62, 0, 0.3, 1) forwards; }
+html.arrivee .rideau__bande { will-change: transform; transform: translate3d(0, 0, 0) skewX(-14deg); animation: rideau-sortie 0.75s cubic-bezier(0.7, 0, 0.25, 1) 0.1s forwards; }
+html.arrivee .rideau__trait { will-change: transform; transform: translate3d(calc(-25vh - 5px), 0, 0) skewX(-14deg); animation: trait-sortie 0.75s cubic-bezier(0.7, 0, 0.25, 1) 0.1s forwards; }
+@keyframes rideau-entree { from { transform: translate3d(-100%, 0, 0) skewX(-14deg); } to { transform: translate3d(0, 0, 0) skewX(-14deg); } }
+@keyframes rideau-sortie { from { transform: translate3d(0, 0, 0) skewX(-14deg); } to { transform: translate3d(100%, 0, 0) skewX(-14deg); } }
+@keyframes trait-entree { from { transform: translate3d(-25vh, 0, 0) skewX(-14deg); } to { transform: translate3d(calc(100vw + 25vh), 0, 0) skewX(-14deg); } }
+@keyframes trait-sortie { from { transform: translate3d(calc(-25vh - 5px), 0, 0) skewX(-14deg); } to { transform: translate3d(calc(100vw + 25vh - 5px), 0, 0) skewX(-14deg); } }
 .copeaux-canvas { position: fixed; inset: 0; z-index: 110; pointer-events: none; width: 100%; height: 100%; }
 
 /* ---------- Mode calme (réduire les animations) ---------- */
@@ -720,4 +734,4 @@ em { font-style: italic; }
 @media (prefers-reduced-motion: reduce) {
   .repere__pt::before, .defile i::after { animation: none; }
 }
-@media print { .site-head, .reticule, .trait-page, .copeaux-canvas { display: none !important; } }
+@media print { .site-head, .reticule, .rideau, .copeaux-canvas { display: none !important; } }

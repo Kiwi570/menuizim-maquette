@@ -271,6 +271,8 @@ function lancer(box) {
   return { uniforms };
 }
 
-document.querySelectorAll('[data-contours]').forEach((box) => {
+const demarrage = () => document.querySelectorAll('[data-contours]').forEach((box) => {
   try { lancer(box); } catch (e) { repli(box); }
 });
+if (document.documentElement.classList.contains('arrivee')) setTimeout(demarrage, 650);
+else demarrage();

@@ -13,7 +13,7 @@ Site statique HTML, CSS et JavaScript, sans étape de construction, prêt pour V
 
 ## Mise en ligne
 
-- `vercel.json` : adresses propres, en-têtes de sécurité (CSP stricte), cache long des fichiers versionnés (`?v=2`).
+- `vercel.json` : adresses propres, en-têtes de sécurité (CSP stricte), cache long des fichiers versionnés (`?v=3`).
 - La maquette est volontairement exclue des moteurs de recherche (`robots.txt`, balise `noindex`, en-tête `X-Robots-Tag`).
   À retirer, avec l’adresse définitive dans `og:url`, le jour où le site remplace menuizim.fr.
 - À chaque nouvelle version des CSS/JS, augmenter `VERSION` pour vider le cache des visiteurs.

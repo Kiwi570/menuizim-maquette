@@ -440,25 +440,36 @@
     return out + '</g>';
   };
 
-  /* ---------- Transition de page : trait de crayon ---------- */
-  const trait = d.createElement('div');
-  trait.className = 'trait-page';
-  trait.setAttribute('aria-hidden', 'true');
-  trait.innerHTML = '<svg viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M -30 120 C 10 90, 35 70, 55 48 S 95 5, 135 -25" pathLength="1" stroke-width="0"/></svg>';
-  d.body.appendChild(trait);
-  const tp = trait.querySelector('path');
-  function cle(k, v) { try { if (v === undefined) return sessionStorage.getItem(k); if (v === null) sessionStorage.removeItem(k); else sessionStorage.setItem(k, v); } catch (e) { return null; } return null; }
-  if (!calme && cle('mz-trait') === '1') {
-    cle('mz-trait', null);
-    gsap.set(tp, { attr: { 'stroke-width': 180 }, strokeDasharray: 1, strokeDashoffset: 0 });
-    gsap.to(tp, { strokeDashoffset: -1, duration: 0.8, ease: 'power3.inOut', delay: 0.05, onComplete: () => gsap.set(tp, { attr: { 'stroke-width': 0 } }) });
+  /* ---------- Transition de page : bande de crayon ----------
+     Animations CSS de transform seulement : elles tournent sur le compositeur du navigateur
+     et restent fluides même pendant que la nouvelle page charge ses scripts et son WebGL. */
+  const rideau = d.querySelector('.rideau');
+  const bande = rideau && rideau.querySelector('.rideau__bande');
+  const arrivee = html.classList.contains('arrivee');
+  MZ.arrivee = arrivee;
+  if (bande) {
+    bande.addEventListener('animationend', (e) => {
+      if (e.animationName === 'rideau-sortie') html.classList.remove('arrivee');
+    });
+    // sécurité : jamais de rideau bloqué
+    if (arrivee) setTimeout(() => html.classList.remove('arrivee'), 1400);
   }
+  // Les animations d'ouverture de la page démarrent quand la bande commence à se retirer
+  if (arrivee && hasGsap) {
+    gsap.globalTimeline.pause();
+    setTimeout(() => gsap.globalTimeline.resume(), 260);
+  }
+  let enDepart = false;
   MZ.partir = function (href) {
-    if (calme) { location.href = href; return; }
-    cle('mz-trait', '1');
-    gsap.set(tp, { attr: { 'stroke-width': 180 }, strokeDasharray: 1, strokeDashoffset: 1 });
-    gsap.to(tp, { strokeDashoffset: 0, duration: 0.55, ease: 'power3.inOut', onComplete: () => { location.href = href; } });
-    setTimeout(() => { location.href = href; }, 1100); // sécurité si l'animation est suspendue
+    if (enDepart) return;
+    if (calme || !bande) { location.href = href; return; }
+    enDepart = true;
+    try { sessionStorage.setItem('mz-rideau', '1'); } catch (e) { /* stockage indisponible */ }
+    const aller = () => { location.href = href; };
+    bande.addEventListener('animationend', (e) => { if (e.animationName === 'rideau-entree') aller(); }, { once: true });
+    html.classList.remove('arrivee');
+    html.classList.add('depart');
+    setTimeout(aller, 850); // sécurité si l'animation n'a pas lieu
   };
   d.addEventListener('click', (e) => {
     if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
@@ -473,8 +484,13 @@
     fermerMenu();
     MZ.partir(a.href);
   });
-  // Retour arrière depuis le cache : retirer le trait
-  window.addEventListener('pageshow', (e) => { if (e.persisted && hasGsap) gsap.set(tp, { attr: { 'stroke-width': 0 } }); });
+  // Retour arrière depuis le cache du navigateur : retirer la bande
+  window.addEventListener('pageshow', (e) => {
+    if (!e.persisted) return;
+    enDepart = false;
+    html.classList.remove('depart', 'arrivee');
+    try { sessionStorage.removeItem('mz-rideau'); } catch (err) { /* rien */ }
+  });
 
   /* ---------- Toile « convergence » (appel final) ---------- */
   d.querySelectorAll('[data-convergence]').forEach((c) => {

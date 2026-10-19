@@ -143,19 +143,8 @@
       e.preventDefault();
       const href = suivant.href;
       if (calme) { location.href = href; return; }
-      const o = { p: 0 };
-      const poly = () => {
-        const pts = [];
-        const N = 24;
-        for (let i = 0; i <= N; i++) {
-          const y = (i / N) * 100;
-          const x = o.p * 130 - 15 + Math.sin(i * 0.9 + o.p * 9) * 6 * (1 - o.p);
-          pts.push(`${Math.max(0, Math.min(100, x)).toFixed(2)}% ${y.toFixed(2)}%`);
-        }
-        vague.style.clipPath = `polygon(0% 0%, ${pts.join(', ')}, 0% 100%)`;
-      };
-      gsap.to(o, { p: 1, duration: 0.7, ease: 'power3.inOut', onUpdate: poly, onComplete: () => MZ.partir(href) });
-      setTimeout(() => { location.href = href; }, 2000); // sécurité si l'animation est suspendue
+      suivant.classList.add('is-part');
+      setTimeout(() => MZ.partir(href), 280);
     });
     if (!calme) {
       gsap.from(suivant.querySelector('.suivant__in strong'), { yPercent: 40, opacity: 0, duration: 1.2, scrollTrigger: { trigger: suivant, start: 'top 80%', once: true } });
