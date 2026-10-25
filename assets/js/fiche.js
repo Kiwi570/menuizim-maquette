@@ -12,7 +12,7 @@
   if (!calme) {
     const tl = gsap.timeline({ delay: 0.15 });
     if (titre && window.SplitText) {
-      const sp = new SplitText(titre, { type: 'lines,words', linesClass: 'ligne' });
+      const sp = new SplitText(titre, { type: 'lines,words', linesClass: 'ligne', aria: 'none' });
       sp.lines.forEach((l) => { l.style.overflow = 'clip'; });
       tl.from(sp.words, { yPercent: 110, stagger: 0.03, duration: 1.2 }, 0);
     }
@@ -138,6 +138,7 @@
   const suivant = d.querySelector('[data-suivant]');
   if (suivant) {
     const vague = suivant.querySelector('.suivant__vague');
+    window.addEventListener('pageshow', (e) => { if (e.persisted) suivant.classList.remove('is-part'); });
     suivant.addEventListener('click', (e) => {
       if (e.metaKey || e.ctrlKey || e.shiftKey) return;
       e.preventDefault();

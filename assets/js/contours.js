@@ -2,7 +2,7 @@
    La coupe d'un chêne se redessine en courbes de niveau ; la souris déforme le
    champ comme un nœud du bois et la courbe survolée s'allume à l'orange du logo.
    Sans WebGL 2 : photo des cernes + courbes dessinées en SVG. */
-import { Renderer, Program, Mesh, Texture, Triangle } from './vendor/ogl.bundle.js?v=2';
+import { Renderer, Program, Mesh, Texture, Triangle } from './vendor/ogl.bundle.js?v=4';
 
 const MZ = window.MZ || {};
 const calme = document.documentElement.classList.contains('calme');

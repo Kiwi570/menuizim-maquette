@@ -97,7 +97,7 @@
   // Arrivée sur une page avec une ancre
   window.addEventListener('load', () => {
     if (location.hash.length > 1) {
-      const c = d.getElementById(decodeURIComponent(location.hash.slice(1)));
+      let c = null; try { c = d.getElementById(decodeURIComponent(location.hash.slice(1))); } catch (e) { /* ancre invalide */ }
       if (c) setTimeout(() => MZ.scrollTo(c), 300);
     }
   });
@@ -130,24 +130,36 @@
   function fermerMenu() {
     if (!menu || !menu.classList.contains('is-ouvert')) return;
     menu.classList.remove('is-ouvert');
+    html.classList.remove('verrou');
     burger.setAttribute('aria-expanded', 'false');
     burger.setAttribute('aria-label', 'Ouvrir le menu');
     MZ.inerte(false);
     if (lenis) lenis.start();
   }
   if (burger && menu) {
+    menu.setAttribute('data-lenis-prevent', '');
+    matchMedia('(min-width: 961px)').addEventListener('change', (e) => { if (e.matches) fermerMenu(); });
     burger.addEventListener('click', () => {
       const ouvrir = !menu.classList.contains('is-ouvert');
       if (!ouvrir) return fermerMenu();
       menu.classList.add('is-ouvert');
+      html.classList.add('verrou');
       burger.setAttribute('aria-expanded', 'true');
       burger.setAttribute('aria-label', 'Fermer le menu');
       MZ.inerte(true);
       if (lenis) lenis.stop();
       setTimeout(() => { const l = menu.querySelector('nav a'); if (l) l.focus({ preventScroll: true }); }, 120);
-      if (!calme) gsap.from(menu.querySelectorAll('nav a'), { yPercent: 60, opacity: 0, stagger: 0.06, duration: 0.9, delay: 0.15 });
+      if (!calme) gsap.fromTo(menu.querySelectorAll('nav a'), { yPercent: 60, opacity: 0 }, { yPercent: 0, opacity: 1, stagger: 0.06, duration: 0.9, delay: 0.15, overwrite: true });
     });
-    d.addEventListener('keydown', (e) => { if (e.key === 'Escape' && menu.classList.contains('is-ouvert')) { fermerMenu(); burger.focus(); } });
+    d.addEventListener('keydown', (e) => {
+      if (!menu.classList.contains('is-ouvert')) return;
+      if (e.key === 'Escape') { fermerMenu(); burger.focus(); return; }
+      if (e.key !== 'Tab') return;
+      const f = [burger, ...menu.querySelectorAll('a[href], button:not([disabled])')];
+      const i = f.indexOf(d.activeElement);
+      if (e.shiftKey && i <= 0) { e.preventDefault(); f[f.length - 1].focus(); }
+      else if (!e.shiftKey && i === f.length - 1) { e.preventDefault(); f[0].focus(); }
+    });
   }
 
   /* ---------- Copier ---------- */
@@ -370,12 +382,11 @@
     const val = n.getAttribute('data-odo');
     if (!val || n.__odo || calme || !hasGsap) return;
     n.__odo = true;
-    n.setAttribute('aria-label', val);
-    n.innerHTML = val.split('').map((ch) => /\d/.test(ch)
+    n.innerHTML = `<span class="visually-hidden">${val}</span>` + val.split('').map((ch) => /\d/.test(ch)
       ? `<span class="odo__col" aria-hidden="true" data-v="${ch}">${'0123456789'.split('').map((k) => `<span>${k}</span>`).join('')}</span>`
       : `<span aria-hidden="true">${ch}</span>`).join('');
     const cols = n.querySelectorAll('.odo__col');
-    const finir = () => { n.textContent = val; n.removeAttribute('aria-label'); };
+    const finir = () => { n.textContent = val; };
     cols.forEach((c, i) => {
       gsap.fromTo(c, { y: '0em' }, {
         y: `-${c.dataset.v}em`, duration: 1.8 + i * 0.25, delay: retard + i * 0.08, ease: 'expo.inOut',
@@ -479,7 +490,7 @@
     if (!href || href.startsWith('#') || /^(tel|mailto|sms):/.test(href)) return;
     const url = new URL(a.href, location.href);
     if (url.origin !== location.origin) return;
-    if (memePage(url)) return; // même page : ancres et filtres gérés ailleurs
+    if (memePage(url)) { if (!url.hash && url.search === location.search) { e.preventDefault(); fermerMenu(); MZ.scrollTo(d.body); } return; } // même page : ancres et filtres gérés ailleurs
     e.preventDefault();
     fermerMenu();
     MZ.partir(a.href);

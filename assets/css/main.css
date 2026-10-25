@@ -71,7 +71,8 @@ img { max-width: 100%; height: auto; display: block; }
 a { color: inherit; }
 button { font: inherit; color: inherit; }
 ::selection { background: var(--traceur); color: var(--graphite); }
-:focus-visible { outline: 2px solid var(--traceur); outline-offset: 3px; border-radius: 2px; }
+:focus-visible { outline: 2px solid var(--graphite); outline-offset: 3px; border-radius: 2px; box-shadow: 0 0 0 5px var(--traceur); }
+.on-nuit :focus-visible, .pied :focus-visible { outline-color: var(--traceur); box-shadow: none; }
 
 h1, h2, h3, h4 {
   font-family: var(--f-display);
@@ -333,8 +334,12 @@ em { font-style: italic; }
 /* Trois actes : défilement horizontal */
 .actes { position: relative; overflow: clip; background: var(--papier); }
 .actes__intro { padding-top: clamp(90px, 14vh, 170px); }
-.actes__piste { display: flex; width: max-content; }
-.acte { width: 100vw; min-height: 100svh; display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); align-items: center; gap: clamp(30px, 5vw, 90px); padding: calc(var(--head-h) + 20px) max(var(--g), env(safe-area-inset-right, 0px)) 60px max(var(--g), env(safe-area-inset-left, 0px)); position: relative; }
+.actes__piste { display: flex; flex-direction: column; width: 100%; }
+/* en ligne seulement pendant l'épinglage horizontal (mode calme, sans JS : actes empilés) */
+.actes.is-h .actes__piste { flex-direction: row; width: max-content; }
+.acte { width: 100%; }
+.actes.is-h .acte { width: 100vw; }
+.acte { min-height: 100svh; display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); align-items: center; gap: clamp(30px, 5vw, 90px); padding: calc(var(--head-h) + 20px) max(var(--g), env(safe-area-inset-right, 0px)) 60px max(var(--g), env(safe-area-inset-left, 0px)); position: relative; }
 .acte__num { font-family: var(--f-display); font-size: clamp(7rem, 22vw, 22rem); line-height: 0.75; font-weight: 200; font-style: italic; color: transparent; -webkit-text-stroke: 1px var(--trait); position: absolute; right: max(var(--g), env(safe-area-inset-right, 0px)); top: calc(var(--head-h) + 10px); font-variation-settings: "opsz" 144, "SOFT" 100; pointer-events: none; }
 .acte h3 { font-size: var(--t-xl); font-variation-settings: "opsz" 144, "SOFT" 30, "WONK" 1; }
 .acte__txt { display: grid; gap: 22px; position: relative; z-index: 1; }
@@ -674,7 +679,7 @@ em { font-style: italic; }
 .champ input, .champ textarea, .champ select {
   width: 100%; border: 0; border-bottom: 1px solid var(--graphite); background: transparent; padding: 10px 0; font: inherit; font-size: 1.1rem; color: var(--graphite); border-radius: 0;
 }
-.champ textarea { min-height: 120px; resize: vertical; border: 1px solid var(--trait); padding: 12px; background: var(--papier); }
+.champ textarea { min-height: 120px; resize: vertical; border: 1px solid var(--graphite-3); padding: 12px; background: var(--papier); }
 .champ input:focus, .champ textarea:focus, .champ select:focus { outline: none; border-color: var(--traceur); box-shadow: 0 1px 0 var(--traceur); }
 .champ .aide { font-size: 0.86rem; color: var(--graphite-3); }
 .champ input[type="file"] { border: 1px dashed var(--graphite-3); padding: 14px; font-size: 0.9rem; background: var(--papier); }
@@ -735,3 +740,24 @@ html.arrivee .rideau__trait { will-change: transform; transform: translate3d(cal
   .repere__pt::before, .defile i::after { animation: none; }
 }
 @media print { .site-head, .reticule, .rideau, .copeaux-canvas { display: none !important; } }
+
+/* ---------- Finitions (audit) ---------- */
+/* menu : la page ne défile plus derrière, même sans Lenis ; défilable en paysage */
+html.verrou { overflow: hidden; }
+.menu-mobile { overflow-y: auto; overscroll-behavior: contain; }
+@media (max-height: 500px) { .menu-mobile { justify-content: flex-start; } .menu-mobile nav a { font-size: clamp(1.6rem, 6vh, 2.2rem); } }
+/* filtre par matériau : 16 px sur tactile (zoom iOS) */
+@media (pointer: coarse) { .filtres select { font-size: 16px; } }
+/* texte sur photo : voile pour rester lisible sur les zones claires */
+.final__bg::after, .suivant__img::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(25,24,22,.85), rgba(25,24,22,.35)); pointer-events: none; }
+@media (max-width: 860px) { .final__bg::after, .suivant__img::after { background: rgba(25,24,22,.7); } }
+/* déroulé en paysage sur téléphone : carte non collante */
+@media (max-width: 860px) and (max-height: 500px) { .deroule__carte { position: relative; top: 0; height: 60vh; } }
+/* coordonnées devenues liens */
+a.val, .menu-mobile .contacts a, .pied li a { color: inherit; text-decoration: none; }
+/* cibles tactiles : 44 px */
+@media (pointer: coarse) {
+  .copier, .puce, .bascule { min-height: 44px; }
+  .mat__fermer { width: 44px; height: 44px; }
+  .pied a { display: inline-block; padding-block: 8px; }
+}

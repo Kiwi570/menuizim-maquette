@@ -11,7 +11,7 @@
   try {
     if (sessionStorage.getItem('mz-rideau') === '1') {
       sessionStorage.removeItem('mz-rideau');
-      if (!h.classList.contains('calme')) h.classList.add('arrivee');
+      if (!h.classList.contains('calme')) { h.classList.add('arrivee'); setTimeout(function () { h.classList.remove('arrivee'); }, 1600); }
     }
   } catch (e) { /* stockage indisponible */ }
 })();

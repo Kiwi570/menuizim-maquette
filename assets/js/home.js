@@ -14,7 +14,7 @@
     const lignes = titre ? titre.querySelectorAll('.l') : [];
     let mots = [];
     if (window.SplitText && titre) {
-      lignes.forEach((l) => { mots = mots.concat(new SplitText(l, { type: 'words,chars', charsClass: 'ch', wordsClass: 'mot' }).chars); });
+      lignes.forEach((l) => { mots = mots.concat(new SplitText(l, { type: 'words,chars', charsClass: 'ch', wordsClass: 'mot', aria: 'none' }).chars); });
     }
     const tl = gsap.timeline({ delay: 0.25 });
     if (mots.length) tl.from(mots, { yPercent: 115, rotate: 6, duration: 1.3, stagger: 0.028, ease: 'expo.out' }, 0);
@@ -32,7 +32,7 @@
   /* ---------- Un seul interlocuteur : les mots s'encrent au défilement ---------- */
   const phrase = d.querySelector('[data-surligne]');
   if (phrase && !calme && window.SplitText) {
-    const sp = new SplitText(phrase, { type: 'words', wordsClass: 'word' });
+    const sp = new SplitText(phrase, { type: 'words', wordsClass: 'word', aria: 'none' });
     gsap.fromTo(sp.words, { opacity: 0.16 }, {
       opacity: 1, ease: 'none', stagger: 0.1,
       scrollTrigger: { trigger: phrase, start: 'top 78%', end: 'bottom 38%', scrub: true }
@@ -60,6 +60,7 @@
   if (piste && !calme) {
     const mm = gsap.matchMedia();
     mm.add('(min-width: 901px)', () => {
+      const sec = piste.closest('.actes'); if (sec) sec.classList.add('is-h');
       const dist = () => piste.scrollWidth - innerWidth;
       const tween = gsap.to(piste, {
         x: () => -dist(), ease: 'none',
@@ -84,7 +85,7 @@
           ScrollTrigger.create({ trigger: acte, containerAnimation: tween, start: 'left 85%', onEnter: () => tr.play() });
         }
       });
-      return () => { gsap.set(piste, { x: 0 }); };
+      return () => { gsap.set(piste, { x: 0 }); if (sec) sec.classList.remove('is-h'); };
     });
     mm.add('(max-width: 900px)', () => {
       piste.querySelectorAll('[data-trace]').forEach((m) => {
@@ -225,7 +226,7 @@
       .from(frise.querySelectorAll(':scope > div'), { y: 30, opacity: 0, stagger: 0.15, duration: 1 }, 0.4);
     const cit = d.querySelector('.citation');
     if (cit && window.SplitText) {
-      const sp = new SplitText(cit, { type: 'words' });
+      const sp = new SplitText(cit, { type: 'words', aria: 'none' });
       gsap.from(sp.words, { yPercent: 60, opacity: 0, stagger: 0.04, duration: 1, scrollTrigger: { trigger: cit, start: 'top 85%', once: true } });
     }
   }
@@ -248,7 +249,9 @@
         retour = gsap.delayedCall(0.3, () => { if (!survol) gsap.to(loop, { timeScale: 1, duration: 1.2, overwrite: true }); });
       }
     });
-    def.addEventListener('pointerenter', () => { survol = true; gsap.to(loop, { timeScale: 0.15, duration: 0.6, overwrite: true }); });
+    def.addEventListener('pointerenter', () => { survol = true; gsap.to(loop, { timeScale: 0, duration: 0.6, overwrite: true }); });
+    def.addEventListener('focusin', () => { survol = true; gsap.to(loop, { timeScale: 0, duration: 0.3, overwrite: true }); });
+    def.addEventListener('focusout', () => { survol = false; gsap.to(loop, { timeScale: 1, duration: 0.6, overwrite: true }); });
     def.addEventListener('pointerleave', () => { survol = false; gsap.to(loop, { timeScale: 1, duration: 0.6, overwrite: true }); });
   } else if (def) {
     def.style.flexWrap = 'wrap';
@@ -262,7 +265,7 @@
   if (!calme) {
     const fin = d.querySelector('.final h2');
     if (fin && window.SplitText) {
-      const sp = new SplitText(fin, { type: 'words' });
+      const sp = new SplitText(fin, { type: 'words', aria: 'none' });
       gsap.from(sp.words, { yPercent: 80, opacity: 0, stagger: 0.07, duration: 1.3, scrollTrigger: { trigger: fin, start: 'top 85%', once: true } });
     }
     const bg = d.querySelector('.final__bg img');

@@ -74,7 +74,7 @@
     let msg = '';
     if (k === 0 && !form.querySelector('input[name="profil"]:checked')) msg = 'Choisissez une option pour continuer.';
     if (k === 1 && !form.querySelector('input[name="piece"]:checked')) msg = 'Cochez au moins une pièce ou un type d’aménagement.';
-    if (k === 2 && !form.querySelector('input[name="materiau"]:checked')) msg = 'Choisissez un matériau, ou « Je ne sais pas encore ».';
+    if (k === 2 && !form.querySelector('input[name="materiau"]:checked')) msg = 'Choisissez un matériau, ou « Je ne sais pas encore ».';
     if (k === 3) { const t = form.querySelector('#idee'); if (t.value.trim().length < 10) msg = 'Décrivez votre idée en quelques mots (10 caractères au moins).'; }
     if (k === 5) {
       const nom = form.querySelector('#nom'); const mail = form.querySelector('#email'); const com = form.querySelector('#commune');
@@ -148,7 +148,7 @@
   prec.addEventListener('click', () => aller(i === pas.length - 1 ? TOTAL - 1 : i - 1));
 
   /* Pièce présélectionnée depuis une fiche (#piece-cuisine) */
-  const h = decodeURIComponent(location.hash.slice(1));
+  let h = ''; try { h = decodeURIComponent(location.hash.slice(1)); } catch (e) { /* ancre invalide */ }
   if (h.startsWith('piece-')) {
     const c = form.querySelector(`#${CSS.escape(h)}`);
     if (c) { c.checked = true; majExemple(); }
@@ -170,7 +170,7 @@
     const titre = d.querySelector('.hero__titre');
     if (titre && window.SplitText) {
       const chars = [];
-      titre.querySelectorAll('.l').forEach((l) => chars.push(...new SplitText(l, { type: 'words,chars', wordsClass: 'mot' }).chars));
+      titre.querySelectorAll('.l').forEach((l) => chars.push(...new SplitText(l, { type: 'words,chars', wordsClass: 'mot', aria: 'none' }).chars));
       gsap.from(chars, { yPercent: 115, rotate: 5, stagger: 0.025, duration: 1.3, delay: 0.2 });
     }
     gsap.from('[data-hero-el]', { y: 26, opacity: 0, stagger: 0.1, duration: 1.1, delay: 0.6 });

@@ -9,7 +9,7 @@
     const titre = d.querySelector('.hero__titre');
     if (titre && window.SplitText) {
       const chars = [];
-      titre.querySelectorAll('.l').forEach((l) => chars.push(...new SplitText(l, { type: 'words,chars', wordsClass: 'mot' }).chars));
+      titre.querySelectorAll('.l').forEach((l) => chars.push(...new SplitText(l, { type: 'words,chars', wordsClass: 'mot', aria: 'none' }).chars));
       gsap.from(chars, { yPercent: 115, rotate: 5, stagger: 0.03, duration: 1.3, delay: 0.2 });
     }
     gsap.from('[data-hero-el]', { y: 26, opacity: 0, stagger: 0.1, duration: 1.1, delay: 0.6 });
@@ -72,7 +72,7 @@
 
   // Filtre depuis l'ancre (#p-cuisine, #m-osb), au chargement et quand elle change
   function depuisAncre(anim) {
-    const h = decodeURIComponent(location.hash.slice(1));
+    let h = ''; try { h = decodeURIComponent(location.hash.slice(1)); } catch (e) { /* ancre invalide */ }
     etat.piece = h.startsWith('p-') ? h.slice(2) : '';
     etat.mat = h.startsWith('m-') ? h.slice(2) : '';
     appliquer(anim);
