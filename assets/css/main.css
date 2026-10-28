@@ -204,10 +204,10 @@ em { font-style: italic; }
   .marque img { width: 32px; height: 32px; }
   .marque__nom { font-size: 1.15rem; }
   .marque__nom small { font-size: 0.52rem; letter-spacing: 0.06em; }
-  .burger { width: 42px; height: 42px; }
-  .burger span { left: 11px; right: 11px; }
-  .burger span:first-child { top: 16px; }
-  .burger span:last-child { top: 24px; }
+  .burger { width: 44px; height: 44px; }
+  .burger span { left: 12px; right: 12px; }
+  .burger span:first-child { top: 17px; }
+  .burger span:last-child { top: 25px; }
 }
 
 /* ---------- Réticule (curseur) ---------- */
@@ -759,5 +759,21 @@ a.val, .menu-mobile .contacts a, .pied li a { color: inherit; text-decoration: n
 @media (pointer: coarse) {
   .copier, .puce, .bascule { min-height: 44px; }
   .mat__fermer { width: 44px; height: 44px; }
-  .pied a { display: inline-block; padding-block: 8px; }
+  .pied a { display: inline-block; padding-block: 8px; min-height: 44px; }
+  .lien { padding-block: 12px; margin-block: -7px; background-position: 0 calc(100% - 7px); }
+  .lien:hover { background-position: 100% calc(100% - 7px); }
+  .fiche-contact a.val, .final__contacts a.val { display: inline-flex; align-items: center; min-height: 44px; }
+  .copier, .filtres select, .marque { min-height: 44px; }
+  [data-rang] .mono a { display: inline-block; padding-block: 14px; margin-block: -14px; }
 }
+/* textes : 12 px minimum sur téléphone et tablette (annotations mono) */
+@media (max-width: 900px) {
+  .illus, .todo, .copier, .repere, .carte__plus, .puce, .bascule, .erreur,
+  .marque__nom small, .releve dd small, .pied .pied__titre, .mat__dos .usages,
+  .choix--grandes label small, .ech label span, .champ label, .fiche-tech dt, .recap dt,
+  .visionneuse button { font-size: max(12px, 0.75rem); }
+  .puce sup { font-size: max(12px, 0.85em); }
+  .marque__nom small { letter-spacing: 0.03em; }
+}
+/* « Un seul interlocuteur » : texte non épinglé sur écran bas, le lien reste visible */
+@media (max-height: 640px) { .approche__texte { position: relative; top: 0; } }
